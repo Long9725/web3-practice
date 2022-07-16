@@ -31,6 +31,7 @@ function EthProvider({ children }) {
     const tryInit = async () => {
       try {
         const artifact = require("../../contracts/SimpleStorage.json");
+        console.log("artifacts : " + artifact);
         init(artifact);
       } catch (err) {
         console.error(err);
