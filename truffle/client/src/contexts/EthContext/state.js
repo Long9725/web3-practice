@@ -12,6 +12,8 @@ const initialState = {
 
 const reducer = (state, action) => {
   const { type, data } = action;
+  // console.log(state);
+  // console.log(data);
   switch (type) {
     case actions.init:
       return { ...state, ...data };

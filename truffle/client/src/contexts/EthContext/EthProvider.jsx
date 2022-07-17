@@ -9,17 +9,32 @@ function EthProvider({ children }) {
   const init = useCallback(
     async artifact => {
       if (artifact) {
-        const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
+        const web3 = new Web3(Web3.givenProvider || "ws://localhost:9545");
         const accounts = await web3.eth.requestAccounts();
         const networkID = await web3.eth.net.getId();
-        const { abi } = artifact;
-        let address, contract;
-        try {
-          address = artifact.networks[networkID].address;
-          contract = new web3.eth.Contract(abi, address);
-        } catch (err) {
-          console.error(err);
+
+        let address = [], contract = [];
+
+        for (var _artifact of artifact) {
+          const { abi } = _artifact;
+          try {
+            var _address = _artifact.networks[networkID].address;
+            var _contract = new web3.eth.Contract(abi, _address);
+
+            address.push(_address);
+            contract.push(_contract);
+          } catch (err) {
+            console.error(err);
+          }
         }
+        // const { abi } = artifact;
+        // let address, contract;
+        // try {
+        //   address = artifact.networks[networkID].address;
+        //   contract = new web3.eth.Contract(abi, address);
+        // } catch (err) {
+        //   console.error(err);
+        // }
         dispatch({
           type: actions.init,
           data: { artifact, web3, accounts, networkID, contract }
@@ -30,8 +45,14 @@ function EthProvider({ children }) {
   useEffect(() => {
     const tryInit = async () => {
       try {
-        const artifact = require("../../contracts/SimpleStorage.json");
-        console.log("artifacts : " + artifact);
+        const simpleStorageArtifact = require("../../contracts/SimpleStorage.json");
+        const itemManagerArtifact = require("../../contracts/ItemManager.json");
+       // const itemArtifact = require("../../contracts/Item.json");
+    
+        const artifact = [simpleStorageArtifact, itemManagerArtifact];
+        // const artifact = [simpleStorageArtifact, itemManagerArtifact, itemArtifact];
+        // const artifact = require("../../contracts/SimpleStorage.json");
+        
         init(artifact);
       } catch (err) {
         console.error(err);
@@ -58,6 +79,7 @@ function EthProvider({ children }) {
       state,
       dispatch
     }}>
+      console.log(artifact);
       {children}
     </EthContext.Provider>
   );

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import useEth from "../../contexts/EthContext/useEth";
+import contracts from "../../contexts/EthContext/contracts";
 
 function ContractBtns({ setValue }) {
   const { state: { contract, accounts } } = useEth();
@@ -12,7 +13,7 @@ function ContractBtns({ setValue }) {
   };
 
   const read = async () => {
-    const value = await contract.methods.read().call({ from: accounts[0] });
+    const value = await contract[contracts.SIMPLE_STORAGE].methods.read().call({ from: accounts[0] });
     setValue(value);
   };
 
@@ -25,7 +26,7 @@ function ContractBtns({ setValue }) {
       return;
     }
     const newValue = parseInt(inputValue);
-    await contract.methods.write(newValue).send({ from: accounts[0] });
+    await contract[contracts.SIMPLE_STORAGE].methods.write(newValue).send({ from: accounts[0] });
   };
 
   return (
