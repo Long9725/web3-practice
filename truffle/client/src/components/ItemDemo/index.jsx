@@ -8,6 +8,15 @@ function ItemDemo() {
   const [cost, setCost] = useState(0);
   const [itemName, setItemName] = useState("example_1");
 
+  const listenToPaymentEvent = () => {
+    contract[contracts.ITEM_MANAGER].events.SupplyChainStep().on("data", async function(event) {
+        console.log(`event : `);
+        console.log(event);
+        let itemObject = await contract[contracts.ITEM_MANAGER].methods.items(event.returnValues._itemIndex).call();
+        console.log("item " + itemObject._identifier + " was paid, deliver it now!");
+    });
+  }
+
   // TODO: fix rendering error 
   const handleInputChange = event => {
     const target = event.target;
@@ -47,6 +56,8 @@ function ItemDemo() {
     console.log(result);
 
     alert("Send : " + cost + " Wei to : " + result.events.SupplyChainStep.returnValues._itemAddress);
+
+    listenToPaymentEvent();
   }
   
   useEffect(() => {
