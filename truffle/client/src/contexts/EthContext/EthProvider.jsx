@@ -10,9 +10,10 @@ function EthProvider({ children }) {
     async artifact => {
       if (artifact) {
         const web3 = new Web3(Web3.givenProvider || "ws://localhost:9545");
+        // TODO: MetaMask와 연결된 계정 중 상위 1개만 accounts에 저장된다.
         const accounts = await web3.eth.requestAccounts();
         const networkID = await web3.eth.net.getId();
-
+        
         let address = [], contract = [];
 
         for (var _artifact of artifact) {
@@ -79,7 +80,6 @@ function EthProvider({ children }) {
       state,
       dispatch
     }}>
-      console.log(artifact);
       {children}
     </EthContext.Provider>
   );

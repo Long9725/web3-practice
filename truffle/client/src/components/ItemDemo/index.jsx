@@ -17,7 +17,7 @@ function ItemDemo() {
     setInputValue({
         [name] : value
     });
-
+    
     if (name === 'cost') {
         setCost(inputValue['cost']);
         console.log(cost);
@@ -32,13 +32,21 @@ function ItemDemo() {
   };
 
   const handleSubmit = async() => {
-    setItemName(inputValue['itemName']);
-    setCost(inputValue['cost']);
+    if(inputValue !== "") {
+        setItemName(inputValue['itemName']);
+        setCost(inputValue['cost']);
+    }
 
     console.log(itemName);
     console.log(cost);
 
-    await contract[contracts.ITEM_MANAGER].methods.createItem(itemName, cost).send({from: accounts[0]});
+    console.log(accounts);
+
+    let result = await contract[contracts.ITEM_MANAGER].methods.createItem(itemName, cost).send({from: accounts[0]});
+
+    console.log(result);
+
+    alert("Send : " + cost + " Wei to : " + result.events.SupplyChainStep.returnValues._itemAddress);
   }
   
   useEffect(() => {
