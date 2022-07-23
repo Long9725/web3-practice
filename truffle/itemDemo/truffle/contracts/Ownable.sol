@@ -3,7 +3,7 @@ pragma solidity ^0.8.14;
 contract Ownable {
     address payable _owner;
     
-    constructor() {
+    constructor(){
         _owner = payable(msg.sender);
     }
 
