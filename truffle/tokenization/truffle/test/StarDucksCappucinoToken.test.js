@@ -1,21 +1,26 @@
 const StarDucksCappucinoToken = artifacts.require("StarDucksCappucinoToken");
 
-var chai = require("chai");
+const chai = require("./setupchai.js");
 const BN = web3.utils.BN;
-const chaiBN = require("chai-bn")(BN);
-chai.use(chaiBN);
-
-var chaiAsPromised = require("chai-as-promised");
-chai.use(chaiAsPromised);
 
 const expect = chai.expect;
+
+require("dotenv").config({path: "../.env"});
 
 contract("Token Test", async (accounts) => {
     
     const [deployerAccount, recipient, anotherAccount] = accounts;
 
+    beforeEach(async () => {
+       this.starDucksCappucinoToken = await StarDucksCappucinoToken.new(process.env.INITIAL_TOKENS);
+    });
+
+    afterEach(async () => {
+
+    });
+
     it("All tokens should be in my account", async () => {
-        let instance = await StarDucksCappucinoToken.deployed();
+        let instance = this.starDucksCappucinoToken;
         let totalSupply = await instance.totalSupply();
 
         // old version
@@ -26,29 +31,41 @@ contract("Token Test", async (accounts) => {
         // expect(await instance.balanceOf(accounts[0])).to.be.a.bignumber.equal(totalSupply);
 
         // chai-as-promised
-        expect(instance.balanceOf(deployerAccount)).to.eventually.be.a.bignumber.equal(totalSupply);
+        return expect(instance.balanceOf(deployerAccount)).to.eventually.be.a.bignumber.equal(totalSupply);
     });
 
     it("is possible to send tokens between accounts", async() => {
         const sendTokens = 1;
 
-        let instance = await StarDucksCappucinoToken.deployed();
+        let instance = this.starDucksCappucinoToken;
         let totalSupply = await instance.totalSupply();
 
         expect(instance.balanceOf(deployerAccount)).to.eventually.be.a.bignumber.equal(totalSupply);
-        expect(instance.transfer(recipient, sendTokens)).to.eventually.be.fulfilled;
-        expect(instance.balanceOf(deployerAccount)).to.eventually.be.a.bignumber.equal(totalSupply.sub(new BN(sendTokens)));
-        expect(instance.balanceOf(recipient)).to.eventually.be.a.bignumber.equal(new BN(sendTokens));
+
+        // 2nd test 이후 before eact hook error 발생 => expectd에 await를 추가하니 해결됐다.
+        // 강의에서는 eventually가 async-await 인 것으로 알려줬는데, 아니었나보다.
+        // Transaction이 완료되고 채굴되기까지 기다려야하는 것 같다.
+        await expect(instance.transfer(recipient, sendTokens)).to.eventually.be.fulfilled;
+
+        totalSupply = totalSupply.sub(new BN(sendTokens));
+
+        expect(instance.balanceOf(deployerAccount)).to.eventually.be.a.bignumber.equal(totalSupply);
+
+        let BN_sendTokens = new BN(sendTokens);
+
+        return expect(instance.balanceOf(recipient)).to.eventually.be.a.bignumber.equal(BN_sendTokens);
     });
 
     // 2nd test 이후 before eact hook error 발생
     it("is not possible to send more tokens than available in total", async() => {
-        let instance = await StarDucksCappucinoToken.deployed();
+        let instance = this.starDucksCappucinoToken;
         let balanceOfDeployer = await instance.totalSupply();
 
-        expect(instance.transfer(recipient, new BN(balanceOfDeployer + 1))).to.eventually.be.rejected;
+        let BN_balanceOfDeployerAddOne = new BN(balanceOfDeployer + 1);
 
-        expect(instance.balanceOf(deployerAccount)).to.eventually.be.a.bignumber.equal(balanceOfDeployer);
+        expect(instance.transfer(recipient, BN_balanceOfDeployerAddOne)).to.eventually.be.rejected;
+
+        return expect(instance.balanceOf(deployerAccount)).to.eventually.be.a.bignumber.equal(balanceOfDeployer);
     });
 });
 
