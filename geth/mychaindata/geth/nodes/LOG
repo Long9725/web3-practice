@@ -254,3 +254,16 @@
 20:00:23.105294 table@remove removed @72
 20:00:23.106478 table@remove removed @69
 20:00:23.106661 table@remove removed @70
+20:57:41.551230 memdb@flush N·37132 S·3MiB
+20:57:41.578547 memdb@flush created L0@76 N·37132 S·769KiB "n:\x00..ail,v695391":"n:\xff..ail,v710878"
+20:57:41.578607 version@stat F·[1 2] S·4MiB[769KiB 3MiB] Sc·[0.25 0.04]
+20:57:41.700550 memdb@flush committed F·1 T·149.135167ms
+20:57:41.706170 journal@remove removed @71
+20:57:55.794246 table@compaction L0·1 -> L1·2 S·4MiB Q·716055
+20:57:55.838852 table@build created L1@77 N·66639 S·2MiB "loc..seq,v311783":"n:\x90..ong,v680232"
+20:57:55.877886 table@build created L1@78 N·52834 S·1MiB "n:\x90..ail,v707585":"version,v1"
+20:57:55.877945 version@stat F·[0 2] S·3MiB[0B 3MiB] Sc·[0.00 0.04]
+20:57:55.935123 table@compaction committed F-1 S-675KiB Ke·0 D·33587 T·140.682791ms
+20:57:55.938141 table@remove removed @76
+20:57:55.939751 table@remove removed @73
+20:57:55.940314 table@remove removed @74
