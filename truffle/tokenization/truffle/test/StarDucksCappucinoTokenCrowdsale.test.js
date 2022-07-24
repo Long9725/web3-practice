@@ -40,6 +40,8 @@ contract("TokenCrowdsale Test", async (accounts) => {
     });
 
     it("should be possible to buy tokens", async () => {
+        const buyTokens = 1;
+
         let tokenInstance = await StarDucksCappucinoToken.deployed();
         let tokenCrowdsaleInstance = await StarDucksCappucinoTokenCrowdsale.deployed();
         let kycInstance = await KycContract.deployed();
@@ -51,6 +53,14 @@ contract("TokenCrowdsale Test", async (accounts) => {
         // expectd에 await를 추가하니 해결됐다.
         // 강의에서는 eventually가 async-await 인 것으로 알려줬는데, 아니었나보다.
         // Transaction이 완료되고 채굴되기까지 기다려야하는 것 같다.
+
+        await expect(tokenInstance.mint(tokenCrowdsaleInstance.address, buyTokens)).to.be.fulfilled;
+
+        var totalSupply = await tokenInstance.totalSupply();
+
+        expect(totalSupply).to.be.a.bignumber.equal(new BN(buyTokens));
+        expect(tokenInstance.balanceOf(tokenCrowdsaleInstance.address)).to.eventually.be.a.bignumber.equal(new BN(buyTokens));
+
         await expect(tokenCrowdsaleInstance.sendTransaction({from: deployerAccount, value: web3.utils.toWei("1", "wei")})).to.be.fulfilled;
 
         balanceBefore = balanceBefore.add(new BN(1));

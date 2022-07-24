@@ -320,3 +320,19 @@
 13:31:02.279797 table@remove removed @92
 13:31:02.280618 table@remove removed @89
 13:31:02.280836 table@remove removed @90
+14:04:49.872374 memdb@flush N·38358 S·3MiB
+14:04:49.922025 memdb@flush created L0@96 N·38358 S·798KiB "n:\x00..ail,v898416":"n:\xff..ail,v912772"
+14:04:49.922121 version@stat F·[1 2] S·3MiB[798KiB 2MiB] Sc·[0.25 0.03]
+14:04:49.958977 memdb@flush committed F·1 T·86.490541ms
+14:04:49.962866 journal@remove removed @91
+14:04:59.707761 table@compaction L0·1 -> L1·2 S·3MiB Q·926758
+14:04:59.785623 table@build created L1@97 N·56704 S·2MiB "loc..seq,v311783":"n:\xc0..ing,v860956"
+14:04:59.814454 table@build created L1@98 N·20156 S·736KiB "n:\xc0..ong,v860955":"version,v1"
+14:04:59.814546 version@stat F·[0 2] S·2MiB[0B 2MiB] Sc·[0.00 0.03]
+14:04:59.831595 table@compaction committed F-1 S-771KiB Ke·0 D·38516 T·123.701708ms
+14:04:59.831880 table@remove removed @96
+14:04:59.832418 table@remove removed @93
+14:04:59.832537 table@remove removed @94
+=============== Jul 25, 2022 (KST) ===============
+00:25:07.493680 db@close closing
+00:25:07.497026 db@close done T·3.34525ms

@@ -20,6 +20,7 @@
 
 require('dotenv').config();
 const mnemonic = process.env["MNEMONIC"];
+const infura_api_key = process.env["INFURA_API_KEY"];
 // const infuraProjectId = process.env["INFURA_PROJECT_ID"];
 
 const HDWalletProvider = require('@truffle/hdwallet-provider');
@@ -60,6 +61,14 @@ module.exports = {
       },
       port: 7545,
       network_id: 5777
+    },
+    ropsten_infura: {
+      provider: function() {
+        return new HDWalletProvider(mnemonic, "https://ropsten.infura.io/v3/" + infura_api_key, AccountIndex)
+      },
+      network_id: 3,
+      // gas: 0x1b95911,    
+      // gasPrice: 20000000000,  // 20 gwei (in wei) (default: 100 gwei)
     }
     //
     // An additional network, but with some advanced options…

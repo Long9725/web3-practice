@@ -12,7 +12,7 @@ contract("Token Test", async (accounts) => {
     const [deployerAccount, recipient, anotherAccount] = accounts;
 
     beforeEach(async () => {
-       this.starDucksCappucinoToken = await StarDucksCappucinoToken.new(process.env.INITIAL_TOKENS);
+       this.starDucksCappucinoToken = await StarDucksCappucinoToken.new(deployerAccount, deployerAccount);
     });
 
     afterEach(async () => {
@@ -34,26 +34,23 @@ contract("Token Test", async (accounts) => {
         return expect(instance.balanceOf(deployerAccount)).to.eventually.be.a.bignumber.equal(totalSupply);
     });
 
-    it("is possible to send tokens between accounts", async() => {
-        const sendTokens = 1;
+    it("is possible to mint tokens to recipient", async() => {
+        const mintTokens = 1;
 
         let instance = this.starDucksCappucinoToken;
-        let totalSupply = await instance.totalSupply();
+        var totalSupply = await instance.totalSupply();
 
-        expect(instance.balanceOf(deployerAccount)).to.eventually.be.a.bignumber.equal(totalSupply);
+        expect(totalSupply).to.be.a.bignumber.equal(new BN(0));
 
         // 2nd test 이후 before eact hook error 발생 => expectd에 await를 추가하니 해결됐다.
         // 강의에서는 eventually가 async-await 인 것으로 알려줬는데, 아니었나보다.
         // Transaction이 완료되고 채굴되기까지 기다려야하는 것 같다.
-        await expect(instance.transfer(recipient, sendTokens)).to.eventually.be.fulfilled;
+        await expect(instance.mint(recipient, mintTokens)).to.eventually.be.fulfilled;
 
-        totalSupply = totalSupply.sub(new BN(sendTokens));
+        totalSupply = await instance.totalSupply();
 
-        expect(instance.balanceOf(deployerAccount)).to.eventually.be.a.bignumber.equal(totalSupply);
-
-        let BN_sendTokens = new BN(sendTokens);
-
-        return expect(instance.balanceOf(recipient)).to.eventually.be.a.bignumber.equal(BN_sendTokens);
+        expect(totalSupply).to.be.a.bignumber.equal(new BN(mintTokens));
+        expect(instance.balanceOf(recipient)).to.eventually.be.a.bignumber.equal(totalSupply);
     });
 
     // 2nd test 이후 before eact hook error 발생
