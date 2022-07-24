@@ -18,11 +18,12 @@
  *
  */
 
-// require('dotenv').config();
-// const mnemonic = process.env["MNEMONIC"];
+require('dotenv').config();
+const mnemonic = process.env["MNEMONIC"];
 // const infuraProjectId = process.env["INFURA_PROJECT_ID"];
 
-// const HDWalletProvider = require('@truffle/hdwallet-provider');
+const HDWalletProvider = require('@truffle/hdwallet-provider');
+const AccountIndex = 0;
 
 module.exports = {
   /**
@@ -50,6 +51,13 @@ module.exports = {
     },
     ganache: {
       host: "127.0.0.1",
+      port: 7545,
+      network_id: 5777
+    },
+    ganache_local: {
+      provider: function() {
+        return new HDWalletProvider(mnemonic, "http://127.0.0.1:7545", AccountIndex)
+      },
       port: 7545,
       network_id: 5777
     }
