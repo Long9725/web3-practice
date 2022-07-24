@@ -3,10 +3,12 @@ import useEth from "../../contexts/EthContext/useEth";
 import contracts from "../../contexts/EthContext/contracts";
 
 import ContractAddress from "./ContractAddress";
+import Web3 from "web3";
 
 function Whitelist() {
-  const { state: { contract, accounts } } = useEth();
+  const { state: { contract, accounts, web3 } } = useEth();
   const [kycAddress, setKycAddress] = useState("0x123...");
+  const [userTokens, setUserTokens] = useState(-1);
 
   console.log(contract);
 
@@ -32,25 +34,30 @@ function Whitelist() {
     await contract[contracts.Kyc].methods.setKycCompleted(kycAddress).send({from: accounts[0]});
     alert("KYC for " + kycAddress + " is completed");
   }
-//   const handleSubmit = async() => {
-//     if(inputValue !== "") {
-//         setItemName(inputValue['itemName']);
-//         setCost(inputValue['cost']);
-//     }
 
-//     console.log(itemName);
-//     console.log(cost);
+  const updateUserTokens = async () => {
+    if (contract !== null) {
+      let userTokens = await contract[contracts.StarDucksCappucinoToken].methods.balanceOf(accounts[0]).call();
+      setUserTokens(userTokens);
+    }
+  }
+  const listenToTokenTransfer = () => {
+    if (contract !== null) {
+      contract[contracts.StarDucksCappucinoToken].events.Transfer({to: accounts[0]}).on("data", updateUserTokens);
+    }
+  }
 
-//     console.log(accounts);
+  useEffect(() => {
+    if(userTokens === -1) {
+      updateUserTokens();
+    }
+  }, [contract, userTokens]);
 
-//     let result = await contract[contracts.ITEM_MANAGER].methods.createItem(itemName, cost).send({from: accounts[0]});
+  listenToTokenTransfer();
 
-//     console.log(result);
-
-//     alert("Send : " + cost + " Wei to : " + result.events.SupplyChainStep.returnValues._itemAddress);
-
-//     listenToPaymentEvent();
-//   }
+  const handleBuyTokens = async() => {
+    await contract[contracts.StarDucksCappucinoTokenCrowdsale].methods.buyTokens(accounts[0]).send({from: accounts[0], value: web3.utils.toWei("1", "wei")});
+  }
 
   return (
     <div>
@@ -61,6 +68,8 @@ function Whitelist() {
         <button type="button" onClick={handleKycWhitelisting} onSubmit={handleKycWhitelisting}>Add to Whitelist</button>
         <h2>Buy Tokens</h2>
         <ContractAddress contractIndex={contracts.StarDucksCappucinoTokenCrowdsale}/>
+        <p>You currently have: {userTokens} CAPPU Tokens</p>
+        <button type="button" onClick={handleBuyTokens}>Buy more tokens</button>
     </div>
   );
 }
