@@ -2,9 +2,13 @@ import { useState, useEffect } from "react";
 import useEth from "../../contexts/EthContext/useEth";
 import contracts from "../../contexts/EthContext/contracts";
 
+import ContractAddress from "./ContractAddress";
+
 function Whitelist() {
   const { state: { contract, accounts } } = useEth();
   const [kycAddress, setKycAddress] = useState("0x123...");
+
+  console.log(contract);
 
 //   const listenToPaymentEvent = () => {
 //     contract[contracts.ITEM_MANAGER].events.SupplyChainStep().on("data", async function(event) {
@@ -55,6 +59,8 @@ function Whitelist() {
         <h2>Kyc Whitelisting</h2>
         Address to allow: <input type="text" name="kycAddress" value={kycAddress} onChange={handleInputChange}/>
         <button type="button" onClick={handleKycWhitelisting} onSubmit={handleKycWhitelisting}>Add to Whitelist</button>
+        <h2>Buy Tokens</h2>
+        <ContractAddress contractIndex={contracts.StarDucksCappucinoTokenCrowdsale}/>
     </div>
   );
 }

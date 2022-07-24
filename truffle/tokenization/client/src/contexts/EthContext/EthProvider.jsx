@@ -42,7 +42,7 @@ function EthProvider({ children }) {
     const tryInit = async () => {
       try {
         const artifact = [StarDucksCappucinoToken, StarDucksCappucinoTokenCrowdsale, Kyc];
-        init(artifact);
+        await init(artifact);
       } catch (err) {
         console.error(err);
       }
@@ -53,8 +53,8 @@ function EthProvider({ children }) {
 
   useEffect(() => {
     const events = ["chainChanged", "accountsChanged"];
-    const handleChange = () => {
-      init(state.artifact);
+    const handleChange = async () => {
+      await init(state.artifact);
     };
 
     events.forEach(e => window.ethereum.on(e, handleChange));
