@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import './Crowdsale.sol';
+import './StarDucksCappucinoToken.sol';
 import './KycContract.sol';
 
 contract StarDucksCappucinoTokenCrowdsale is Crowdsale {

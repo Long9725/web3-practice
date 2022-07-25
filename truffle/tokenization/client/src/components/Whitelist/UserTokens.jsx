@@ -4,7 +4,7 @@ import contracts from "../../contexts/EthContext/contracts";
 
 function UserTokens() {
   const { state: { contract, accounts } } = useEth();
-  const [userTokens, setUserTokens] = useState(0);
+  const [userTokens, setUserTokens] = useState(-1);
 
   const updateUserTokens = async () => {
     if (contract !== null) {
@@ -20,16 +20,27 @@ function UserTokens() {
   }
 
   useEffect(() => {
-
+    if(contract !== null && userTokens === -1) {
+      updateUserTokens();
+    }
   }, [contract, userTokens]);
 
   listenToTokenTransfer();
 
-  return (
-    <div>
-        <p>You currently have: {userTokens} CAPPU Tokens</p>
-    </div>
-  );
+  if (userTokens === -1) {
+    return (
+      <div>
+        <p>Your tokens are loading ...</p>
+      </div>
+    )
+  } else {
+    return (
+      <div>
+          <p>You currently have: {userTokens} CAPPU Tokens</p>
+      </div>
+    );
+  }
+  
 }
 
 export default UserTokens;

@@ -5,6 +5,7 @@ import contracts from "../../contexts/EthContext/contracts";
 import ContractAddress from "./ContractAddress";
 import TotalSupply from "./TotalSupply";
 import UserTokens from "./UserTokens";
+import BuyTokensBtn from "./BuyTokenBtn";
 
 function Whitelist() {
   const { state: { contract, accounts, web3 } } = useEth();
@@ -26,10 +27,6 @@ function Whitelist() {
     alert("KYC for " + kycAddress + " is completed");
   }
 
-  const handleBuyTokens = async() => {
-    await contract[contracts.StarDucksCappucinoTokenCrowdsale].methods.buyTokens(accounts[0]).send({from: accounts[0], value: web3.utils.toWei("1", "wei")});
-  }
-
   return (
     <div>
         <h1>StarDucks Cappucino Token Sale</h1>
@@ -41,7 +38,7 @@ function Whitelist() {
         <ContractAddress contractIndex={contracts.StarDucksCappucinoTokenCrowdsale}/>
         <TotalSupply />
         <UserTokens />
-        <button type="button" onClick={handleBuyTokens}>Buy more tokens</button>
+        <BuyTokensBtn />
     </div>
   );
 }
