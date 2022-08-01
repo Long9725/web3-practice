@@ -3,28 +3,46 @@ pragma solidity ^0.8.0;
 
 import './ERC721Metadata.sol';
 
-/*
-    minting 함수를 만드는 데 고려할 것
-        a. nft가 한 address를 향해야 한다.
-        b. token ids를 기록해야 한다.
-        c. token ids에 대한 token owner의 address를 기록해야 한다.
-        d. owner address는 얼마나 많은 양의 token을 가질 수 있는지 기록해야 한다.
-        e. transfer log를 기록하고 event로 알려줘야 한다.
-*/
-
+/// @title ERC-721 Non-Fungible Token Standard
+/// @dev See https://eips.ethereum.org/EIPS/eip-721
+///  Note: the ERC-165 identifier for this interface is 0x80ac58cd.
 contract ERC721 {
 
-    event Transfer(address from, address to, uint256 tokenId);
+    event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
     mapping(uint256 => address) private _tokenOwner;
 
     mapping(address => uint256) private _ownedTokensCount;
-    
+
+    /// @notice Count all NFTs assigned to an owner
+    /// @dev NFTs assigned to the zero address are considered invalid, and this
+    ///  function throws for queries about the zero address.
+    /// @param _owner An address for whom to query the balance
+    /// @return The number of NFTs owned by `_owner`, possibly zero
+    function balanceOf(address _owner) public view returns (uint256) {
+        require(_owner != address(0x0), "ERC721: owner query for non-existent token");
+
+        uint256 balanceOfOwner = _ownedTokensCount[_owner];
+        return balanceOfOwner;
+    }
+
+    /// @notice Find the owner of an NFT
+    /// @dev NFTs assigned to zero address are considered invalid, and queries
+    ///  about them do throw.
+    /// @param _tokenId The identifier for an NFT
+    /// @return The address of the owner of the NFT
+    function ownerOf(uint256 _tokenId) external view returns (address) {
+        require(!_exists(_tokenId), "ERC721: token already minted");
+
+        address owner = _tokenOwner[_tokenId];
+        return owner;
+    }
+
     function _exists(uint256 tokenId) internal view returns(bool) {
         address owner = _tokenOwner[tokenId];
         return owner != address(0x0);
     }
 
-    function _mint(address to, uint256 tokenId) internal {
+    function _mint(address to, uint256 tokenId) internal virtual {
         require(to != address(0x0), "ERC721: minting to the zero address");
         require(!_exists(tokenId), "ERC721: token already minted");
 

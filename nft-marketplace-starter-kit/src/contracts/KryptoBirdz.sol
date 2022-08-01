@@ -2,12 +2,16 @@
 pragma solidity ^0.8.0;
 
 import './ERC721Connector.sol';
-contract Kryptobird is ERC721Connector {
+contract KryptoBird is ERC721Connector {
     
     // array to store our nfts
     string [] public kryptoBirdz;
 
     mapping(string => bool) _kryptoBirdzExists;
+
+    constructor() ERC721Connector('KryptoBird', 'KBIRDZ') {
+
+    }
 
     function mint(string memory _kryptoBird) public {
         // this is deprecated on ^0.6.0 - uint256 _id = KryptoBirdz.push(_KryptoBird);
@@ -20,9 +24,5 @@ contract Kryptobird is ERC721Connector {
         _mint(msg.sender, _id);
 
         _kryptoBirdzExists[_kryptoBird] = true;
-    }
-
-    constructor() ERC721Connector('Kryptobird', 'KBIRDZ') {
-
     }
 }
