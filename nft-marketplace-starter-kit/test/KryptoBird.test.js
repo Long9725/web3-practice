@@ -64,7 +64,7 @@ contract('KryptoBird',  (accounts) => {
             let result = [];
             let kryptoBird;
 
-            for(i = 0; i < totalSupply; i++) {
+            for(var i = 0; i < totalSupply; i++) {
                 kryptoBird = await contract.kryptoBirdz(i);
                 result.push(kryptoBird);
             }
