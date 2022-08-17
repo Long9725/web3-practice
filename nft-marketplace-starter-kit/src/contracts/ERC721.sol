@@ -3,11 +3,14 @@ pragma solidity ^0.8.0;
 
 import './ERC165.sol';
 import './interfaces/IERC721.sol';
+import './libraries/Counters.sol';
 
 /// @title ERC-721 Non-Fungible Token Standard
 /// @dev See https://eips.ethereum.org/EIPS/eip-721
 ///  Note: the ERC-165 identifier for this interface is 0x80ac58cd.
 contract ERC721 is ERC165, IERC721 {
+    using SafeMath for uint256;
+    using Counters for Counters.Counter;
 
     /// @dev This emits when ownership of any NFT changes by any mechanism.
     ///  This event emits when NFTs are created (`from` == 0) and destroyed
@@ -27,7 +30,7 @@ contract ERC721 is ERC165, IERC721 {
     // event ApprovalForAll(address indexed _owner, address indexed _operator, bool _approved);
 
     mapping(uint256 => address) private _tokenOwner;
-    mapping(address => uint256) private _ownedTokensCount;
+    mapping(address => Counters.Counter) private _ownedTokensCount;
     mapping(uint256 => address) private _tokenApprovals;
     mapping(address => mapping(address => bool)) private _operatorApprovals;
 
@@ -55,7 +58,7 @@ contract ERC721 is ERC165, IERC721 {
         require(!_exists(tokenId), "ERC721: token already minted");
 
         _tokenOwner[tokenId] = to;
-        _ownedTokensCount[to] += 1;
+        _ownedTokensCount[to].increment();
         
         emit Transfer(address(this), to, tokenId);
     }
@@ -65,8 +68,8 @@ contract ERC721 is ERC165, IERC721 {
         require(ownerOf(tokenId) == from, "ERC721: You are not the owner");
 
         _tokenOwner[tokenId] = to;
-        _ownedTokensCount[to] += 1;
-        _ownedTokensCount[from] -= 1;
+        _ownedTokensCount[to].increment();
+        _ownedTokensCount[from].decrement();
 
         emit Transfer(from, to, tokenId);
     }
@@ -97,7 +100,7 @@ contract ERC721 is ERC165, IERC721 {
     function balanceOf(address _owner) public view override returns (uint256) {
         require(_owner != address(0x0), "ERC721: owner query for non-existent token");
 
-        uint256 balanceOfOwner = _ownedTokensCount[_owner];
+        uint256 balanceOfOwner = _ownedTokensCount[_owner].current();
         return balanceOfOwner;
     }
 
